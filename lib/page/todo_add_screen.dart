@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
+// Load model
 import '../model/todo_model.dart';
 import '../model/task_model.dart';
 
@@ -271,7 +272,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
   }
 
   Future<void> _saveTodoToPreferences(Todo todo) async {
-    final SharedPreferences  prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Ambil daftar todo yang sudah ada, jika ada
     List<String>? existingTodos = prefs.getStringList('todos') ?? [];

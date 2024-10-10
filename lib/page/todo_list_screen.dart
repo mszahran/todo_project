@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import './todo_add_screen.dart';
+// Load model
 import '../model/todo_model.dart';
+// Load page
+import './todo_add_screen.dart';
 
 class TodoListScreen extends StatefulWidget {
   @override
