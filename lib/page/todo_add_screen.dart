@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+
 // Load model
 import '../model/todo_model.dart';
 import '../model/task_model.dart';
@@ -22,13 +23,31 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
   String taskDescription = '';
   DateTime? dueDate;
 
+  // Buat controller untuk TextFormField
+  final TextEditingController dueDateController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Set nilai awal controller
+    dueDateController.text = dueDate != null
+        ? DateFormat('dd-MMMM-yyyy').format(dueDate!)
+        : '';
+  }
+
+  @override
+  void dispose() {
+    dueDateController.dispose(); // Jangan lupa untuk membersihkan controller
+    super.dispose();
+  }
+
   void _addTask() {
     if (taskName.isNotEmpty && taskDescription.isNotEmpty && dueDate != null) {
       final newTask = Task(
         id: DateTime.now().toString(),
         name: taskName,
         description: taskDescription,
-        dueDate: dueDate!,
+        dueDate: dueDate!, // Simpan tanggal yang dipilih
       );
 
       setState(() {
@@ -39,6 +58,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
       taskName = '';
       taskDescription = '';
       dueDate = null;
+      dueDateController.text = ''; // Reset TextFormField controller
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -59,30 +79,30 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(3),
-          ),
           title: Text(
             'Add Task',
             style: TextStyle(
               fontFamily: 'Quicksand',
             ),
           ),
+          shape: RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(8), // Sedikit membulatkan sudut dialog
+          ),
           content: Builder(
             builder: (context) {
-              // Get available height and width of the build area of this widget. Make a choice depending on the size.
-              var height = MediaQuery.of(context).size.height;
               var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                height: height - 500,
-                width: width - 100,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
+              return SingleChildScrollView(
+                // Memastikan konten bisa di-scroll
+                child: Container(
+                  width: width * 0.9, // Responsif terhadap lebar layar
+                  child:
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
                         child: Text(
                           'Task Name',
                           style: TextStyle(
@@ -92,35 +112,31 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                           ),
                         ),
                       ),
-                    ),
-                    TextField(
-                      onChanged: (value) {
-                        taskName = value; // Menyimpan nama task
-                      },
-                      decoration: InputDecoration(
-                        labelStyle: TextStyle(
-                          color: Colors.grey, // Ubah warna label di sini
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(
-                                0xFFE2EBFA), // Ubah warna border saat fokus
+                      TextField(
+                        onChanged: (value) {
+                          taskName = value; // Menyimpan nama task
+                        },
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(
+                            color: Colors.grey,
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(
-                                0xFFE2EBFA), // Ubah warna border saat fokus
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFE2EBFA),
+                            ),
                           ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFE2EBFA),
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: Color(0xFFE2EBFA),
                         ),
-                        filled: true,
-                        fillColor: Color(0xFFE2EBFA),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
+                      SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerLeft,
                         child: Text(
                           'Task Description',
                           style: TextStyle(
@@ -130,36 +146,32 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                           ),
                         ),
                       ),
-                    ),
-                    TextField(
-                      onChanged: (value) {
-                        taskDescription = value; // Menyimpan deskripsi task
-                      },
-                      maxLines: 5,
-                      decoration: InputDecoration(
-                        labelStyle: TextStyle(
-                          color: Colors.grey, // Ubah warna label di sini
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(
-                                0xFFE2EBFA), // Ubah warna border saat fokus
+                      TextField(
+                        onChanged: (value) {
+                          taskDescription = value; // Menyimpan deskripsi task
+                        },
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(
+                            color: Colors.grey,
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(
-                                0xFFE2EBFA), // Ubah warna border saat fokus
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFE2EBFA),
+                            ),
                           ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFE2EBFA),
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: Color(0xFFE2EBFA),
                         ),
-                        filled: true,
-                        fillColor: Color(0xFFE2EBFA),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
+                      SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerLeft,
                         child: Text(
                           'Due Date',
                           style: TextStyle(
@@ -169,48 +181,44 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                           ),
                         ),
                       ),
-                    ),
-                    TextFormField(
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        labelStyle: TextStyle(
-                          color: Colors.grey, // Change label color here
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(
-                                0xFFE2EBFA), // Change border color when focused
+                      TextFormField(
+                        readOnly: true,
+                        controller: dueDateController, // Gunakan controller
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(
+                            color: Colors.grey,
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(
-                                0xFFE2EBFA), // Change border color when enabled
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFE2EBFA),
+                            ),
                           ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFE2EBFA),
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: Color(0xFFE2EBFA),
+                          hintText: 'Select a date', // Hapus kondisi ini
                         ),
-                        filled: true,
-                        fillColor: Color(0xFFE2EBFA),
-                        hintText: dueDate != null
-                            ? DateFormat('dd-MMMM-yyyy').format(
-                                dueDate!) // Format and display selected date
-                            : 'Select a date',
+                        onTap: () async {
+                          final selectedDate = await showDatePicker(
+                            context: context,
+                            initialDate: dueDate ?? DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (selectedDate != null) {
+                            setState(() {
+                              dueDate = selectedDate; // Simpan tanggal yang dipilih
+                              dueDateController.text = DateFormat('dd-MMMM-yyyy').format(dueDate!); // Update controller
+                            });
+                          }
+                        },
                       ),
-                      onTap: () async {
-                        final selectedDate = await showDatePicker(
-                          context: context,
-                          initialDate: dueDate ?? DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (selectedDate != null) {
-                          setState(() {
-                            dueDate =
-                                selectedDate; // Store the selected due date
-                          });
-                        }
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
@@ -228,6 +236,12 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                   fontFamily: 'Quicksand',
                 ),
               ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFE2EBFA),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -236,8 +250,14 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
               child: Text(
                 'Cancel',
                 style: TextStyle(
-                  color: Color(0xFF0038FB),
+                  color: Color(0xFFFB8600),
                   fontFamily: 'Quicksand',
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFFAECE2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
@@ -260,7 +280,8 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
       await _saveTodoToPreferences(newTodo);
 
       widget.addTodo(newTodo);
-      // Navigator.of(context).pop(); // Kembali ke halaman sebelumnya
+
+      Navigator.of(context).pop(); // Kembali ke halaman sebelumnya
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -278,20 +299,10 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
     List<String>? existingTodos = prefs.getStringList('todos') ?? [];
 
     // Simpan todo baru sebagai JSON string
-    // existingTodos.add(todoToJson(todo)); // Mengubah todo menjadi JSON string
+    existingTodos.add(todo.toJson()); // Menggunakan toJson() dari model Todo
 
     // Simpan kembali daftar todo yang sudah diperbarui
     await prefs.setStringList('todos', existingTodos);
-  }
-
-  // Fungsi untuk mengubah Todo menjadi string JSON
-  String todoToJson(Todo todo) {
-    return '{"id": "${todo.id}", "title": "${todo.title}", "description": "${todo.description}", "tasks": ${tasksToJson(todo.tasks)}}';
-  }
-
-  // Fungsi untuk mengubah daftar task menjadi string JSON
-  String tasksToJson(List<Task> tasks) {
-    return '[${tasks.map((task) => '{"id": "${task.id}", "name": "${task.name}", "description": "${task.description}", "dueDate": "${task.dueDate.toIso8601String()}"}').join(',')}]';
   }
 
   @override
@@ -416,9 +427,10 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                 itemCount: tasks.length,
                 itemBuilder: (ctx, index) {
                   return Card(
+                    color: Color(0xFFE2EBFA),
                     margin: const EdgeInsets.symmetric(vertical: 4),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(3),
                     ),
                     child: ListTile(
                       title: Row(
@@ -465,11 +477,17 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                             ),
                           ),
                           Divider(),
-                          Text(
-                            'Due: ${DateFormat('dd-MM-yyyy').format(tasks[index].dueDate)}',
-                            style: TextStyle(
-                              fontFamily: 'Quicksand',
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(Icons.calendar_month_outlined),
+                              Text(
+                                'Due: ${DateFormat('dd-MM-yyyy').format(tasks[index].dueDate)}',
+                                style: TextStyle(
+                                  fontFamily: 'Quicksand',
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
