@@ -19,4 +19,4 @@ samples, guidance on mobile development, and a full API reference.
 
 - [UI/UX app](https://github.com/mszahran/todo_project/tree/main/ui_ux_app)
 
-- ![Alt text]([image link](https://github.com/mszahran/todo_project/blob/main/ui_ux_app/Screenshot_20241011_010741.jpg))
+- ![Alt text](https://github.com/mszahran/todo_project/blob/main/ui_ux_app/Screenshot_20241011_010741.jpg)
